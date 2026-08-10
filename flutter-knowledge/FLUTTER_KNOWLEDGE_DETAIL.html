@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#07111f" />
+  <title>Flutter Knowledge Detail</title>
+  <style>
+    :root { color-scheme: dark; --bg:#07111f; --deep:#030811; --panel:rgba(9,21,38,.88); --soft:rgba(17,35,58,.72); --line:rgba(145,180,222,.16); --strong:rgba(145,210,255,.36); --text:#f4f8ff; --muted:#91a7c2; --cyan:#62e6ff; --green:#8bf5bb; --amber:#ffc978; --pink:#ff91ca; --purple:#b09cff; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; min-width:0; overflow-x:hidden; background:radial-gradient(circle at 80% 0%,rgba(132,92,203,.14),transparent 30%),linear-gradient(135deg,#06101d,#071525 52%,#050b15); color:var(--text); font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; letter-spacing:0; }
+    button,input,textarea { font:inherit; }
+    button { cursor:pointer; }
+    button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible { outline:2px solid var(--cyan); outline-offset:2px; }
+    .topbar { position:fixed; top:0; right:0; left:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:68px; padding:12px 24px; border-bottom:1px solid var(--line); background:rgba(4,12,24,.82); backdrop-filter:blur(18px); }
+    .brand { display:flex; align-items:center; gap:12px; min-width:0; }
+    .brand-mark { width:34px; height:34px; flex:0 0 auto; border:1px solid rgba(98,230,255,.5); border-radius:50%; background:radial-gradient(circle at 35% 30%,#a8f8ff,#2d8db4 34%,#263267 70%,#11172d); box-shadow:0 0 22px rgba(98,230,255,.32); }
+    .brand strong { display:block; overflow:hidden; font-size:13px; letter-spacing:.12em; text-overflow:ellipsis; white-space:nowrap; }
+    .brand small { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
+    .top-actions,.stats,.button-row,.badge-list,.tag-list { display:flex; align-items:center; gap:8px; }
+    .button,.back-button { display:inline-flex; align-items:center; justify-content:center; min-height:40px; padding:0 13px; border:1px solid var(--line); border-radius:10px; color:var(--text); text-decoration:none; background:rgba(11,27,46,.78); transition:.2s ease; }
+    .button:hover,.back-button:hover { border-color:var(--strong); background:rgba(26,54,82,.9); }
+    .button.primary { border-color:rgba(98,230,255,.55); background:linear-gradient(135deg,rgba(44,145,173,.7),rgba(90,75,174,.58)); }
+    .icon-button { width:40px; padding:0; }
+    .page { display:grid; grid-template-columns:250px minmax(0,760px) 280px; justify-content:center; gap:20px; min-height:100vh; padding:96px 24px 56px; }
+    .toc,.rail { position:sticky; top:92px; align-self:start; min-width:0; max-height:calc(100vh - 112px); overflow:auto; }
+    .toc { padding:16px; border-right:1px solid var(--line); }
+    .eyebrow { margin:0 0 8px; color:var(--cyan); font-size:10px; font-weight:750; letter-spacing:.18em; text-transform:uppercase; }
+    .toc h2 { margin:0 0 14px; font-size:16px; }
+    .toc-list { display:grid; gap:3px; }
+    .toc-list a { display:block; padding:8px 9px; border:1px solid transparent; border-radius:8px; color:#b9c9dc; font-size:11px; line-height:1.4; text-decoration:none; }
+    .toc-list a:hover,.toc-list a.active { border-color:var(--line); color:var(--text); background:rgba(25,53,81,.6); }
+    .content { min-width:0; }
+    .hero,.source-section,.chapter,.challenge,.review-panel { padding:24px; border:1px solid var(--line); background:var(--panel); box-shadow:0 18px 60px rgba(0,0,0,.16); }
+    .hero { border-top:2px solid var(--module-color,var(--cyan)); border-radius:18px; }
+    .hero h1 { margin:0; font-size:clamp(26px,4vw,42px); line-height:1.1; letter-spacing:-.03em; }
+    .hero p { max-width:650px; margin:12px 0 0; color:#b3c5d9; font-size:14px; line-height:1.7; }
+    .tag { display:inline-flex; align-items:center; min-height:25px; padding:0 9px; border:1px solid var(--line); border-radius:999px; color:var(--muted); font-size:10px; }
+    .tag.module { color:var(--module-color,var(--cyan)); border-color:color-mix(in srgb,var(--module-color,var(--cyan)) 45%,transparent); }
+    .stats { flex-wrap:wrap; margin-top:18px; }
+    .stat { min-width:92px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:rgba(17,35,58,.5); }
+    .stat b { display:block; color:var(--cyan); font-size:17px; }
+    .stat span { color:var(--muted); font-size:10px; }
+    .source-section,.chapter,.challenge,.review-panel { margin-top:16px; border-radius:14px; }
+    .source-section h2,.chapter h2,.challenge h2,.review-panel h2 { margin:0 0 17px; font-size:21px; line-height:1.3; }
+    .chapter { scroll-margin-top:88px; }
+    .chapter > h2 { padding-bottom:12px; border-bottom:1px solid var(--line); }
+    .handbook-copy { min-width:0; color:#c7d5e4; font-size:14px; line-height:1.8; }
+    .handbook-copy h1 { margin:18px 0 10px; font-size:25px; }
+    .handbook-copy h2 { margin:24px 0 10px; font-size:21px; }
+    .handbook-copy h3 { margin:25px 0 9px; color:#e0ebf7; font-size:16px; }
+    .handbook-copy h4 { margin:20px 0 7px; color:#d8e9f8; font-size:14px; }
+    .handbook-copy p { margin:10px 0; }
+    .handbook-copy ul,.handbook-copy ol { margin:10px 0; padding-left:24px; }
+    .handbook-copy li { margin:4px 0; }
+    .handbook-copy blockquote { margin:14px 0; padding:9px 14px; border-left:3px solid var(--purple); color:#c9bff0; background:rgba(67,52,111,.18); }
+    .handbook-copy code { padding:2px 5px; border:1px solid rgba(98,230,255,.18); border-radius:5px; color:#d3efff; background:#050d18; font:12px/1.5 "SFMono-Regular",Consolas,monospace; }
+    .handbook-copy pre { max-width:100%; margin:14px 0; overflow:auto; padding:15px; border:1px solid var(--line); border-radius:10px; background:#050d18; -webkit-overflow-scrolling:touch; }
+    .handbook-copy pre code { padding:0; border:0; white-space:pre; background:transparent; }
+    .table-wrap { max-width:100%; margin:14px 0; overflow-x:auto; border:1px solid var(--line); border-radius:9px; }
+    .handbook-copy table { width:100%; min-width:480px; border-collapse:collapse; font-size:12px; }
+    .handbook-copy th,.handbook-copy td { padding:9px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    .handbook-copy th { color:#dceeff; background:rgba(26,54,82,.6); }
+    .handbook-copy tr:last-child td { border-bottom:0; }
+    .challenge { border-color:rgba(176,156,255,.3); background:linear-gradient(135deg,rgba(67,52,111,.28),rgba(11,27,46,.8)); }
+    .challenge-head { display:flex; justify-content:space-between; gap:12px; }
+    .challenge-head p { margin:0; color:var(--muted); font-size:12px; }
+    .question-count { color:var(--amber); font-size:11px; white-space:nowrap; }
+    .challenge-question { margin:18px 0 12px; color:#f0eaff; font-size:16px; line-height:1.6; }
+    .options { display:grid; gap:8px; }
+    .option { width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:9px; color:#c6d6e7; text-align:left; background:rgba(5,13,24,.75); }
+    .option:hover { border-color:var(--strong); }
+    .option.correct { border-color:rgba(139,245,187,.7); color:var(--green); background:rgba(54,125,91,.2); }
+    .option.wrong { border-color:rgba(255,145,202,.65); color:var(--pink); background:rgba(122,48,86,.2); }
+    .explanation { margin-top:12px; padding:11px; border-left:3px solid var(--green); color:#c5dbd0; font-size:12px; line-height:1.6; background:rgba(139,245,187,.08); }
+    .challenge-result { margin-top:14px; color:var(--amber); font-size:12px; }
+    .rail-card { margin-bottom:12px; padding:16px; border:1px solid var(--line); border-radius:13px; background:var(--panel); }
+    .rail-card h3 { margin:0 0 11px; font-size:13px; }
+    .rail-card p { margin:6px 0; color:var(--muted); font-size:11px; line-height:1.6; }
+    .note-input { width:100%; min-height:86px; resize:vertical; padding:9px; border:1px solid var(--line); border-radius:8px; color:var(--text); background:#050d18; font-size:11px; line-height:1.6; }
+    .xp-bar { height:7px; overflow:hidden; border-radius:99px; background:rgba(143,176,211,.12); }
+    .xp-bar i { display:block; height:100%; background:linear-gradient(90deg,var(--cyan),var(--green)); }
+    .badge-list { flex-wrap:wrap; align-items:stretch; }
+    .badge { width:72px; padding:8px 5px; border:1px solid var(--line); border-radius:9px; color:var(--muted); text-align:center; font-size:9px; }
+    .badge strong { display:block; margin-bottom:4px; color:var(--amber); font-size:18px; }
+    .badge.earned { border-color:rgba(255,201,120,.55); color:var(--text); background:rgba(255,201,120,.1); }
+    .review-item { display:block; width:100%; margin:6px 0; padding:8px; border:1px solid var(--line); border-radius:8px; color:#c8d8e9; text-align:left; background:transparent; }
+    .review-item small { display:block; margin-top:3px; color:var(--pink); }
+    .drawer-button { display:none; }
+    .empty { padding:32px 4px; color:var(--muted); }
+    .toast { position:fixed; right:20px; bottom:20px; z-index:30; max-width:300px; padding:11px 14px; border:1px solid var(--strong); border-radius:9px; color:var(--text); background:#0d2238; opacity:0; transform:translateY(10px); transition:.2s ease; pointer-events:none; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    @media (max-width:1050px) { .page { grid-template-columns:220px minmax(0,760px); } .rail { grid-column:2; position:static; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; max-height:none; } .rail-card { margin:0; } }
+    @media (max-width:720px) {
+      .topbar { min-height:62px; padding:9px 12px; } .brand small { display:none; } .brand strong { font-size:11px; } .top-actions .button:not(.icon-button) { display:none; } .drawer-button { display:inline-flex; }
+      .page { display:block; padding:78px 12px 32px; } .toc { position:fixed; top:62px; bottom:0; left:0; z-index:15; width:min(310px,88vw); max-height:none; padding:20px 16px; border-right:1px solid var(--line); background:#071525; transform:translateX(-105%); transition:transform .2s ease; } .toc.open { transform:translateX(0); }
+      .hero,.source-section,.chapter,.challenge,.review-panel { padding:17px; } .hero h1 { font-size:28px; } .handbook-copy { font-size:13px; } .handbook-copy pre { font-size:12px; } .rail { display:grid; grid-template-columns:1fr 1fr; margin-top:16px; } .rail-card:first-child { grid-column:1/-1; }
+    }
+    @media (max-width:430px) { .rail { display:block; } .rail-card { margin-bottom:12px; } .button-row { width:100%; } .button-row .button { flex:1; min-height:44px; } .handbook-copy table { min-width:420px; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><button class="button icon-button drawer-button" id="tocButton" aria-label="打开章节目录">☰</button><div class="brand-mark" aria-hidden="true"></div><div><strong>FLUTTER KNOWLEDGE ORBIT</strong><small>完整手册 · 可探索学习轨道</small></div></div>
+    <div class="top-actions"><a class="back-button" href="FLUTTER_KNOWLEDGE_PLAN.html">← 返回知识星球</a><button class="button icon-button" id="homeButton" title="返回首页" aria-label="返回首页">⌂</button></div>
+  </header>
+  <div class="page">
+    <aside class="toc" id="toc"><p class="eyebrow">Chapter index</p><h2 id="tocTitle">章节目录</h2><nav class="toc-list" id="tocList"></nav></aside>
+    <main class="content" id="content"></main>
+    <aside class="rail" id="rail"></aside>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="flutter-knowledge-modules.js"></script>
+  <script src="flutter-handbook-data.js"></script>
+  <script>
+    (() => {
+      const storageKey = 'flutter-knowledge-orbit-v1';
+      const modules = window.FLUTTER_MODULES || [];
+      const handbook = window.FLUTTER_HANDBOOK_DATA || { preface: '', chapters: [] };
+      const params = new URLSearchParams(window.location.search);
+      const queryId = params.get('module');
+      const reviewQuery = Number(params.get('review'));
+      const reviewSource = params.get('source') === 'quick' ? 'quick' : 'challenge';
+      const module = modules.find((item) => item.id === queryId) || modules.find((item) => item.id === 'roadmap') || modules[0];
+      const content = document.getElementById('content');
+      const toc = document.getElementById('toc');
+      const state = loadState();
+      let quizIndex = Number.isInteger(reviewQuery) && reviewQuery >= 0 && reviewQuery < 5 ? reviewQuery : 0;
+      let quizScore = 0;
+      let quizAnswered = false;
+      let toastTimer;
+
+      function loadState() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+          const next = { completed: {}, notes: {}, tasks: {}, selected: null, read: {}, results: {}, wrong: [], xp: 0, badges: {}, streak: { count: 0, lastDate: null }, currentModule: null, ...saved };
+          next.read = next.read || {};
+          next.results = next.results || {};
+          next.wrong = Array.isArray(next.wrong) ? next.wrong : [];
+          next.badges = next.badges || {};
+          next.streak = next.streak && typeof next.streak === 'object' ? next.streak : { count: 0, lastDate: null };
+          next.xp = Number(next.xp) || 0;
+          return next;
+        } catch (error) { return { completed: {}, notes: {}, tasks: {}, selected: null, read: {}, results: {}, wrong: [], xp: 0, badges: {}, streak: { count: 0, lastDate: null }, currentModule: null }; }
+      }
+      function saveState() { localStorage.setItem(storageKey, JSON.stringify(state)); if (document.getElementById('rail')) renderRail(); }
+      function dateKey(date = new Date()) { return date.toISOString().slice(0, 10); }
+      function award(id, amount) { state.badges[id] = true; state.xp += amount; }
+      function touchLearning() {
+        // Opening a page records reading only; streak changes require an explicit action.
+        state.currentModule = module.id;
+        state.selected = module.id;
+        state.read[module.id] = { opened: true, lastOpened: Date.now() };
+        saveState();
+      }
+      function recordLearning(xp) {
+        const today = dateKey();
+        if (state.streak.lastDate !== today) {
+          const previous = new Date(`${state.streak.lastDate || today}T00:00:00`);
+          const delta = Math.round((new Date(`${today}T00:00:00`) - previous) / 86400000);
+          state.streak.count = delta === 1 ? state.streak.count + 1 : 1;
+          state.streak.lastDate = today;
+          state.xp += 10;
+        }
+        state.xp += xp;
+        award('first-orbit', 0);
+        if (state.streak.count >= 5) award('five-streak', 0);
+        if (Number.isInteger(reviewQuery) && reviewQuery >= 0 && reviewQuery < 5) award('wrong-review', 0);
+        saveState();
+      }
+      function escapeHtml(value) { return String(value).replace(/[&<>"']/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[char])); }
+      function inline(value) {
+        let result = escapeHtml(value);
+        result = result.replace(/`([^`]+)`/g, '<code>$1</code>');
+        result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
+          const safeUrl = /^(https?:\/\/|\.\.?\/|#)/i.test(url) ? url : '#';
+          return `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noreferrer">${text}</a>`;
+        });
+        return result;
+      }
+      function renderMarkdown(source) {
+        const lines = String(source || '').split('\n');
+        const html = [];
+        let paragraph = [];
+        let code = null;
+        const flushParagraph = () => { if (paragraph.length) { html.push(`<p>${paragraph.map(inline).join('<br>')}</p>`); paragraph = []; } };
+        for (let i = 0; i < lines.length; i += 1) {
+          const line = lines[i];
+          const fence = line.match(/^\s*```(.*)$/);
+          if (fence) { if (code) { html.push(`<pre><code>${escapeHtml(code.lines.join('\n'))}</code></pre>`); code = null; } else { flushParagraph(); code = { language: fence[1].trim(), lines: [] }; } continue; }
+          if (code) { code.lines.push(line); continue; }
+          if (!line.trim()) { flushParagraph(); continue; }
+          const heading = line.match(/^(#{1,4})\s+(.+)$/);
+          if (heading) { flushParagraph(); const level = Math.min(4, heading[1].length); html.push(`<h${level}>${inline(heading[2])}</h${level}>`); continue; }
+          if (/^\|/.test(line) && i + 1 < lines.length && /^\|?\s*:?-{3,}/.test(lines[i + 1])) {
+            flushParagraph(); const rows = []; rows.push(line); i += 2;
+            while (i < lines.length && /^\|/.test(lines[i])) { rows.push(lines[i]); i += 1; }
+            i -= 1;
+            const cells = (row) => row.replace(/^\|\s*|\s*\|$/g, '').split('|').map((cell) => inline(cell.trim()));
+            html.push(`<div class="table-wrap"><table><thead><tr>${cells(rows[0]).map((cell) => `<th>${cell}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map((row) => `<tr>${cells(row).map((cell) => `<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`); continue;
+          }
+          if (/^>\s?/.test(line)) { flushParagraph(); const quote = []; while (i < lines.length && /^>\s?/.test(lines[i])) { quote.push(lines[i].replace(/^>\s?/, '')); i += 1; } i -= 1; html.push(`<blockquote>${quote.map(inline).join('<br>')}</blockquote>`); continue; }
+          if (/^\s*[-*+]\s+/.test(line) || /^\s*\d+\.\s+/.test(line)) {
+            flushParagraph(); const ordered = /^\s*\d+\./.test(line); const items = []; const pattern = ordered ? /^\s*\d+\.\s+/ : /^\s*[-*+]\s+/;
+            while (i < lines.length && pattern.test(lines[i])) { items.push(lines[i].replace(pattern, '')); i += 1; } i -= 1; html.push(`<${ordered ? 'ol' : 'ul'}>${items.map((item) => `<li>${inline(item)}</li>`).join('')}</${ordered ? 'ol' : 'ul'}>`); continue;
+          }
+          paragraph.push(line);
+        }
+        flushParagraph(); if (code) html.push(`<pre><code>${escapeHtml(code.lines.join('\n'))}</code></pre>`);
+        return html.join('');
+      }
+      function chapter(id) { return handbook.chapters.find((item) => item.id === id); }
+      function renderSource() {
+        if (module.id === 'roadmap') return `<section class="source-section"><div class="handbook-copy">${renderMarkdown(handbook.preface)}</div></section>${renderChapter(chapter('chapter-1'))}`;
+        const selected = chapter(module.chapter);
+        return renderChapter(selected, module.sections);
+      }
+      function renderChapter(item, sectionTitles = []) {
+        if (!item) return '<section class="source-section"><div class="empty">暂时找不到这部分手册内容，请返回首页选择其他模块。</div></section>';
+        const sections = sectionTitles.length ? item.sections.filter((section) => sectionTitles.includes(section.title)) : item.sections;
+        const intro = item.intro ? `<div class="handbook-copy">${renderMarkdown(item.intro)}</div>` : '';
+        return `<section class="chapter" id="${item.id}"><h2>${inline(item.title)}</h2>${intro}${sections.map((section) => `<article id="${section.id}" class="handbook-copy"><h3>${inline(section.title)}</h3>${renderMarkdown(section.content)}</article>`).join('')}</section>`;
+      }
+      function renderToc() {
+        const item = chapter(module.chapter);
+        const entries = [];
+        if (module.id === 'roadmap') entries.push(['chapter-1', '学习路线']);
+        if (item) {
+          const selected = module.sections.length ? item.sections.filter((section) => module.sections.includes(section.title)) : item.sections;
+          selected.forEach((section) => entries.push([section.id, section.title]));
+        }
+        document.getElementById('tocTitle').textContent = module.id === 'roadmap' ? '前言与路线' : module.title;
+        document.getElementById('tocList').innerHTML = entries.map(([id, title]) => `<a href="#${id}">${inline(title)}</a>`).join('') || '<span class="empty">本模块内容见下方原文。</span>';
+      }
+      function renderQuiz() {
+        const quiz = module.quiz[quizIndex];
+        const result = state.results[module.id];
+        document.getElementById('challenge').innerHTML = `<div class="challenge-head"><div><p class="eyebrow">Chapter challenge</p><h2>章节闯关</h2><p>共 5 题，答对 80% 即可通关，失败不会阻止阅读。</p></div><span class="question-count">${quizIndex + 1} / 5</span></div><div class="challenge-question">${inline(quiz.question)}</div><div class="options">${quiz.options.map((option, index) => `<button class="option" data-option="${index}">${inline(option)}</button>`).join('')}</div><div class="explanation" id="explanation" hidden></div>${result ? `<div class="challenge-result">上次成绩：${result.score}/5 ${result.passed ? '· 已通关' : '· 再试一次'}</div>` : ''}`;
+        quizAnswered = false;
+         document.querySelectorAll('#challenge .option').forEach((button) => button.addEventListener('click', () => answerQuiz(Number(button.dataset.option))));
+      }
+      function answerQuiz(choice) {
+        if (quizAnswered) return;
+        quizAnswered = true;
+        const quiz = module.quiz[quizIndex]; const correct = choice === quiz.answer;
+        document.querySelectorAll('#challenge .option').forEach((button, index) => { button.disabled = true; if (index === quiz.answer) button.classList.add('correct'); if (index === choice && !correct) button.classList.add('wrong'); });
+        const explanation = document.getElementById('explanation'); explanation.hidden = false; explanation.textContent = `${correct ? '回答正确。' : '回答不正确。'} ${quiz.explanation}`;
+        if (correct) { quizScore += 1; recordLearning(5); } else { if (!state.wrong.some((wrong) => wrong.moduleId === module.id && (wrong.source || 'challenge') === 'challenge' && wrong.quizIndex === quizIndex)) state.wrong.push({ moduleId: module.id, source: 'challenge', quizIndex, question: quiz.question, explanation: quiz.explanation }); recordLearning(0); }
+        setTimeout(() => { if (quizIndex < 4) { quizIndex += 1; renderQuiz(); } else finishQuiz(); }, 750);
+      }
+      function finishQuiz() {
+        const passed = quizScore >= 4; state.results[module.id] = { score: quizScore, passed, completedAt: Date.now() }; if (passed) { award('chapter-clear', 20); state.completed[module.id] = true; if (modules.every((item) => state.completed[item.id])) award('orbit-complete', 50); } saveState();
+        document.getElementById('challenge').innerHTML = `<p class="eyebrow">Challenge result</p><h2>${passed ? '章节已通关' : '再读一遍，再挑战'}</h2><p class="challenge-result">本次得分 ${quizScore} / 5。${passed ? '经验与完成状态已保存。' : '正文仍然全部开放，错题已加入复习轨道。'}</p><div class="button-row"><button class="button primary" id="retryQuiz">重新挑战</button><a class="button" href="FLUTTER_KNOWLEDGE_PLAN.html">回到星球</a></div>`;
+        document.getElementById('retryQuiz').addEventListener('click', () => { quizIndex = 0; quizScore = 0; renderQuiz(); });
+      }
+      function answerQuick(choice) {
+        const quiz = module.quiz[0];
+        const correct = choice === quiz.answer;
+        document.querySelectorAll('[data-quick-option]').forEach((button, index) => { button.disabled = true; if (index === quiz.answer) button.classList.add('correct'); if (index === choice && !correct) button.classList.add('wrong'); });
+        const explanation = document.getElementById('quickExplanation');
+        explanation.hidden = false;
+        explanation.textContent = `${correct ? '回答正确。' : '回答不正确。'} ${quiz.explanation}`;
+        if (!correct && !state.wrong.some((wrong) => wrong.moduleId === module.id && wrong.source === 'quick' && wrong.quizIndex === 0)) state.wrong.push({ moduleId: module.id, source: 'quick', quizIndex: 0, question: quiz.question, explanation: quiz.explanation });
+        recordLearning(correct ? 5 : 0);
+      }
+      function renderRail() {
+        const earned = window.FLUTTER_BADGES.filter((badge) => state.badges[badge.id]).map((badge) => `<div class="badge earned" title="${badge.description}"><strong>${badge.icon}</strong>${badge.title}</div>`).join('');
+        const locked = window.FLUTTER_BADGES.filter((badge) => !state.badges[badge.id]).map((badge) => `<div class="badge" title="${badge.description}"><strong>·</strong>${badge.title}</div>`).join('');
+        const wrong = state.wrong.filter((item) => modules.some((candidate) => candidate.id === item.moduleId)).slice(-5).reverse();
+        const percent = Math.min(100, state.xp % 100);
+        document.getElementById('rail').innerHTML = `<div class="rail-card"><h3>学习状态</h3><p>经验 ${state.xp} XP · 连续学习 ${state.streak.count} 天</p><div class="xp-bar"><i style="width:${percent}%"></i></div><p>${state.completed[module.id] ? '本模块已完成' : '读完正文后开始挑战'}</p></div><div class="rail-card"><h3>知识徽章</h3><div class="badge-list">${earned}${locked}</div></div><div class="rail-card"><h3>错题复习轨道</h3>${wrong.length ? wrong.map((item) => `<button class="review-item" data-review="${item.moduleId}">${inline(item.question)}<small>点击回到本题模块</small></button>`).join('') : '<p>答错的题目会在这里等待复习。</p>'}</div><div class="rail-card"><h3>今日任务</h3><p>${inline(module.task)}</p><button class="button ${state.tasks[module.id] ? '' : 'primary'}" id="taskButton">${state.tasks[module.id] ? '任务已完成' : '完成今日任务'}</button></div><div class="rail-card"><h3>我的笔记</h3><textarea class="note-input" id="noteInput" placeholder="记录一个关键结论、坑点或面试答案...">${escapeHtml(state.notes[module.id] || '')}</textarea></div>`;
+        document.getElementById('taskButton').addEventListener('click', () => { state.tasks[module.id] = !state.tasks[module.id]; if (state.tasks[module.id]) recordLearning(15); else saveState(); showToast(state.tasks[module.id] ? '今日任务完成，经验已增加' : '已取消今日任务'); });
+        document.getElementById('noteInput').addEventListener('input', (event) => { state.notes[module.id] = event.target.value; localStorage.setItem(storageKey, JSON.stringify(state)); });
+        document.querySelectorAll('[data-review]').forEach((button) => button.addEventListener('click', () => { const target = modules.find((item) => item.id === button.dataset.review); const review = wrong.find((item) => item.moduleId === button.dataset.review); if (target) window.location.href = `FLUTTER_KNOWLEDGE_DETAIL.html?module=${encodeURIComponent(target.id)}&review=${review && Number.isInteger(review.quizIndex) ? review.quizIndex : 0}&source=${review && review.source === 'quick' ? 'quick' : 'challenge'}`; }));
+      }
+      function showToast(message) { const toast = document.getElementById('toast'); toast.textContent = message; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2200); }
+
+      touchLearning();
+      content.innerHTML = `<section class="hero" style="--module-color:${module.color}"><div class="tag-list"><span class="tag module">${module.week}</span><span class="tag">${module.id}</span><span class="tag">${state.read[module.id] ? '已读过' : '新模块'}</span></div><h1>${inline(module.title)}</h1><p>${inline(module.short)}。${inline(module.desc)}</p><div class="stats"><div class="stat"><b>${handbook.chapters.length}</b><span>手册章节</span></div><div class="stat"><b>${module.quiz.length}</b><span>挑战题</span></div><div class="stat"><b>${state.wrong.filter((item) => item.moduleId === module.id).length}</b><span>本模块错题</span></div></div><div class="button-row" style="margin-top:18px"><a class="button primary" href="#challenge">开始章节挑战</a><a class="button" href="FLUTTER_KNOWLEDGE_PLAN.html">返回知识星球</a></div></section><section class="source-section quick-answer"><p class="eyebrow">Quick answer</p><h2>快问快答</h2><p class="challenge-question">${inline(module.quiz[0].question)}</p><div class="options quick-options">${module.quiz[0].options.map((option, index) => `<button class="option" data-quick-option="${index}">${inline(option)}</button>`).join('')}</div><div class="explanation" id="quickExplanation" hidden></div></section>${module.id === 'roadmap' ? `<section class="source-section"><div class="handbook-copy">${renderMarkdown(handbook.preface)}</div></section>` : ''}${module.id === 'roadmap' ? renderChapter(chapter('chapter-1')) : renderSource()}<section class="challenge" id="challenge"></section>`;
+      renderToc(); renderQuiz(); renderRail();
+      document.querySelectorAll('[data-quick-option]').forEach((button) => button.addEventListener('click', () => answerQuick(Number(button.dataset.quickOption))));
+      document.getElementById('tocButton').addEventListener('click', () => toc.classList.toggle('open'));
+      document.getElementById('homeButton').addEventListener('click', () => { window.location.href = 'FLUTTER_KNOWLEDGE_PLAN.html'; });
+      document.querySelectorAll('#toc a').forEach((link) => link.addEventListener('click', () => toc.classList.remove('open')));
+      window.addEventListener('hashchange', () => document.querySelectorAll('#toc a').forEach((link) => link.classList.toggle('active', link.getAttribute('href') === window.location.hash)));
+    })();
+  </script>
+</body>
+</html>
